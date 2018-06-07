@@ -15,21 +15,13 @@ class ResultsPlotter:
         self.dir = projectDir
         self.plotter = PlotMgr()
 
-    def plotPCs( self, nCols=4 ):
-        for root, dirs, files in os.walk(self.dir):
-            for filename in files:
-                if( filename.endswith( Params.PcExt )):
-                    dataPath = os.path.join(self.dir,filename)
-                    print "Plotting PC results from file " + dataPath
-                    self.plotter.mpl_timeplot( dataPath, nCols )
+    def plotPCs( self, result_file, nCols=4 ):
+        print "Plotting PC results from file " + result_file
+        self.plotter.mpl_timeplot( result_file, nCols )
 
-    def plotEOFs( self, nCols, smooth=True ):
-        for root, dirs, files in os.walk(self.dir):
-            for filename in files:
-                if( filename.endswith( Params.EofExt )):
-                    dataPath = os.path.join(self.dir,filename)
-                    print "Plotting EOF results from file " + dataPath
-                    self.plotter.mpl_spaceplot( dataPath, nCols, 0, smooth )
+    def plotEOFs( self, result_file, nCols=4, smooth=True ):
+        print "Plotting EOF results from file " + result_file
+        self.plotter.mpl_spaceplot( result_file, nCols, 0, smooth )
 
 class PlotMgr:
 
@@ -169,6 +161,8 @@ class PlotMgr:
                                     iplot = iplot + 1
                             except:
                                 print "Skipping variable: " + varName
+
+                    fig.subplots_adjust(wspace=0.1, hspace=0.1, top=0.95, bottom=0.05)
                     plt.show()
                     return
                 else: time.sleep(1)

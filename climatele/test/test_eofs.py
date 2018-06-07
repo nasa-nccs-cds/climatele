@@ -9,7 +9,7 @@ varName = "ts"
 data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
 outDir = "/tmp/"
 start_year = 1980
-end_year = 2010
+end_year = 2000
 nModes = 4
 
 experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_' + varName
