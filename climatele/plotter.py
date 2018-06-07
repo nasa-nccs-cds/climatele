@@ -15,17 +15,21 @@ class ResultsPlotter:
         self.dir = projectDir
         self.plotter = PlotMgr()
 
-    def plotPCs(self):
+    def plotPCs( self, nCols=4 ):
         for root, dirs, files in os.walk(self.dir):
             for filename in files:
                 if( filename.endswith( Params.PcExt )):
-                    self.plotter.mpl_timeplot( os.path.join(self.dir,filename), 2 )
+                    dataPath = os.path.join(self.dir,filename)
+                    print "Plotting PC results from file " + dataPath
+                    self.plotter.mpl_timeplot( dataPath, nCols )
 
-    def plotEOFs(self):
+    def plotEOFs( self, nCols, smooth=True ):
         for root, dirs, files in os.walk(self.dir):
             for filename in files:
                 if( filename.endswith( Params.EofExt )):
-                    self.plotter.mpl_spaceplot( os.path.join(self.dir,filename), 0, True )
+                    dataPath = os.path.join(self.dir,filename)
+                    print "Plotting EOF results from file " + dataPath
+                    self.plotter.mpl_spaceplot( dataPath, nCols, 0, smooth )
 
 class PlotMgr:
 
@@ -118,7 +122,7 @@ class PlotMgr:
                 naxes = naxes + 1
         return naxes
 
-    def mpl_spaceplot( self, dataPath, timeIndex=0, smooth=False ):
+    def mpl_spaceplot( self, dataPath, numCols=4, timeIndex=0, smooth=False ):
         if dataPath:
             for k in range(0,30):
                 if( os.path.isfile(dataPath) ):
@@ -131,35 +135,40 @@ class PlotMgr:
                     fig = plt.figure()
                     varNames = list( map( lambda v: v.id, vars ) )
                     varNames.sort()
-                    nCols = min( len(varNames), 4 )
+                    nCols = min( len(varNames), numCols )
                     nRows = math.ceil( len(varNames) / float(nCols) )
                     iplot = 1
                     for varName in varNames:
-                        variable = f( varName )
-                        if len( variable.shape ) > 1:
-                            ax = fig.add_subplot( nRows, nCols, iplot )
-                            ax.set_title(varName)
-                            spatialData = variable( time=slice(timeIndex,timeIndex+1), squeeze=1 )
-                            m = Basemap( llcrnrlon=lons[0],
-                                         llcrnrlat=lats[0],
-                                         urcrnrlon=lons[len(lons)-1],
-                                         urcrnrlat=lats[len(lats)-1],
-                                         epsg='4326',
-                                         lat_0 = lats.mean(),
-                                         lon_0 = lons.mean())
-                            lon, lat = np.meshgrid( lons, lats )
-                            xi, yi = m(lon, lat)
-                            smoothing = 'gouraud' if smooth else 'flat'
-                            cs2 = m.pcolormesh(xi, yi, spatialData, cmap='jet', shading=smoothing )
-                            lats_space = abs(lats[0])+abs(lats[len(lats)-1])
-                            m.drawparallels(np.arange(lats[0],lats[len(lats)-1], round(lats_space/5, 0)), labels=[1,0,0,0], dashes=[6,900])
-                            lons_space = abs(lons[0])+abs(lons[len(lons)-1])
-                            m.drawmeridians(np.arange(lons[0],lons[len(lons)-1], round(lons_space/5, 0)), labels=[0,0,0,1], dashes=[6,900])
-                            m.drawcoastlines()
-                            m.drawstates()
-                            m.drawcountries()
-                            cbar = m.colorbar(cs2,location='bottom',pad="10%")
-                            iplot = iplot + 1
+                        if not varName.endswith("_bnds"):
+                            try:
+                                variable = f( varName )
+                                if len( variable.shape ) > 1:
+                                    m = Basemap( llcrnrlon=lons[0],
+                                                 llcrnrlat=lats[0],
+                                                 urcrnrlon=lons[len(lons)-1],
+                                                 urcrnrlat=lats[len(lats)-1],
+                                                 epsg='4326',
+                                                 lat_0 = lats.mean(),
+                                                 lon_0 = lons.mean())
+                                    ax = fig.add_subplot( nRows, nCols, iplot )
+                                    ax.set_title(varName)
+                                    lon, lat = np.meshgrid( lons, lats )
+                                    xi, yi = m(lon, lat)
+                                    smoothing = 'gouraud' if smooth else 'flat'
+                                    spatialData = variable( time=slice(timeIndex,timeIndex+1), squeeze=1 )
+                                    cs2 = m.pcolormesh(xi, yi, spatialData, cmap='jet', shading=smoothing )
+                                    lats_space = abs(lats[0])+abs(lats[len(lats)-1])
+                                    m.drawparallels(np.arange(lats[0],lats[len(lats)-1], round(lats_space/5, 0)), labels=[1,0,0,0], dashes=[6,900])
+                                    lons_space = abs(lons[0])+abs(lons[len(lons)-1])
+                                    m.drawmeridians(np.arange(lons[0],lons[len(lons)-1], round(lons_space/5, 0)), labels=[0,0,0,1], dashes=[6,900])
+                                    m.drawcoastlines()
+                                    m.drawstates()
+                                    m.drawcountries()
+                                    cbar = m.colorbar(cs2,location='bottom',pad="10%")
+                                    print "Plotting variable: " + varName
+                                    iplot = iplot + 1
+                            except:
+                                print "Skipping variable: " + varName
                     plt.show()
                     return
                 else: time.sleep(1)

@@ -61,8 +61,8 @@ class EOFSolver:
             outfile.write(v)
         outfile.close()
 
-    def plotEOFs(self):
-        self.plotter.plotEOFs()
+    def plotEOFs( self, nCols ):
+        self.plotter.plotEOFs( nCols )
 
-    def plotPCs(self):
-        self.plotter.plotPCs()
+    def plotPCs( self, nCols ):
+        self.plotter.plotPCs (nCols )
