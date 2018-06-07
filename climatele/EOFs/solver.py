@@ -3,9 +3,11 @@ import cdutil, os
 import os.path
 import cdms2 as cdms
 import cdtime, math
+from climatele.plotter import ResultsPlotter
+from climatele import Params
 
 class EOFSolver:
-    variable = None  # type: cdms.AbstractVariable
+
 
     def __init__(self, _project, _experiment, _outDir ):
         self.project = _project
@@ -13,9 +15,10 @@ class EOFSolver:
         self.directory = os.path.join( _outDir, self.project )
         if not os.path.exists(self.directory):
             os.makedirs(self.directory)
+        self.plotter = ResultsPlotter( self.directory )
 
     def compute(self, data_variable, nModes, center=True, scale=True, removeCycle=True ):
-        self.variable = data_variable
+        self.variable = data_variable                                                          # type: cdms.Variable
         data = cdutil.ANNUALCYCLE.departures(self.variable) if removeCycle else self.variable
         self.solver = Eof( data, weights='none', center=center, scale=scale )
         self.nModes = nModes
@@ -23,7 +26,7 @@ class EOFSolver:
 
         self.eofs = self.solver.eofs( neofs=nModes )
         self.pcs = self.solver.pcs().transpose()
-        print "Computed eofs"
+        print "Computed EOFs"
 
         self.fracs = self.solver.varianceFraction()
         self.pves = [ str(round(float(frac*100.),1)) + '%' for frac in self.fracs ]
@@ -35,7 +38,7 @@ class EOFSolver:
         self.saveEOFs()
 
     def savePCs(self):
-        outfilePath = os.path.join( self.directory, self.experiment + '-PCs.nc' )
+        outfilePath = os.path.join( self.directory, self.experiment + Params.PcExt )
         outfile = cdms.open(outfilePath, 'w')
         timeAxis = self.variable.getTime()
 
@@ -47,7 +50,7 @@ class EOFSolver:
         outfile.close()
 
     def saveEOFs(self):
-        outfilePath = os.path.join( self.directory, self.experiment + '-EOFs.nc' )
+        outfilePath = os.path.join( self.directory, self.experiment + Params.EofExt )
         outfile = cdms.open(outfilePath, 'w')
         axes = [ self.variable.getLatitude(), self.variable.getLongitude() ]
 
@@ -57,3 +60,9 @@ class EOFSolver:
             v = cdms.createVariable(eof.data, None, 0, 0, None, float('nan'), None, axes,  {"pve": self.pves[iPlot], "long_name": plot_title_str}, "EOF-" + str(iPlot))
             outfile.write(v)
         outfile.close()
+
+    def plotEOFs(self):
+        self.plotter.plotEOFs()
+
+    def plotPCs(self):
+        self.plotter.plotPCs()

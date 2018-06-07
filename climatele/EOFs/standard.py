@@ -67,7 +67,7 @@ class Eof(object):
 
         EOF analysis with no weighting::
 
-            from eofs.standard import Eof
+            from EOFs.standard import Eof
             solver = Eof(data)
 
         EOF analysis of a data array with spatial dimensions that
@@ -76,7 +76,7 @@ class Eof(object):
         for the latitude weights to be broadcastable to this shape, an
         extra length-1 dimension is added to the end::
 
-            from eofs.standard import Eof
+            from EOFs.standard import Eof
             import numpy as np
             latitude = np.linspace(-90, 90, 73)
             weights_array = np.cos(np.deg2rad(latitude))[:, np.newaxis]
@@ -272,18 +272,18 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
             An array with the ordered EOFs along the first dimension.
 
         **Examples:**
 
         All EOFs with no scaling::
 
-            eofs = solver.eofs()
+            EOFs = solver.EOFs()
 
         The leading EOF with scaling applied::
 
-            eof1 = solver.eofs(neofs=1, eofscaling=1)
+            eof1 = solver.EOFs(neofs=1, eofscaling=1)
 
         """
         if neofs is None or neofs > self.neofs:
@@ -331,14 +331,14 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
             An array with the ordered EOFs along the first dimension.
 
         **Examples:**
 
         All EOFs::
 
-            eofs = solver.eofsAsCorrelation()
+            EOFs = solver.eofsAsCorrelation()
 
         The leading EOF::
 
@@ -389,14 +389,14 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
             An array with the ordered EOFs along the first dimension.
 
         **Examples:**
 
         All EOFs::
 
-            eofs = solver.eofsAsCovariance()
+            EOFs = solver.eofsAsCovariance()
 
         The leading EOF::
 

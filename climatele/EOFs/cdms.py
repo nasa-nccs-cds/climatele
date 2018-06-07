@@ -77,7 +77,7 @@ class Eof(object):
 
         EOF analysis with grid-cell-area weighting for the input field::
 
-            from eofs.cdms import Eof
+            from EOFs.cdms import Eof
             solver = Eof(dataset, weights='area')
 
         """
@@ -216,7 +216,7 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
            A `cdms2` variable containing the ordered EOFs. The EOFs are
            numbered from 0 to *neofs* - 1.
 
@@ -224,11 +224,11 @@ class Eof(object):
 
         All EOFs with no scaling::
 
-            eofs = solver.eofs()
+            EOFs = solver.EOFs()
 
         First 3 EOFs with scaling applied::
 
-            eofs = solver.eofs(neofs=3, eofscaling=1)
+            EOFs = solver.EOFs(neofs=3, eofscaling=1)
 
         """
         eofs = self._solver.eofs(eofscaling, neofs)
@@ -237,7 +237,7 @@ class Eof(object):
         eofax.long_name = 'eof_number'
         axlist = [eofax] + self._channels
         eofs = cdms2.createVariable(eofs,
-                                    id='eofs',
+                                    id='EOFs',
                                     axes=axlist,
                                     fill_value=self._missing_value)
         eofs.long_name = 'empirical_orthogonal_functions'
@@ -264,7 +264,7 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
            A `cdms2` variable containing the ordered EOFs. The EOFs are
            numbered from 0 to *neofs* - 1.
 
@@ -272,7 +272,7 @@ class Eof(object):
 
         All EOFs::
 
-            eofs = solver.eofsAsCorrelation()
+            EOFs = solver.eofsAsCorrelation()
 
         The leading EOF::
 
@@ -285,7 +285,7 @@ class Eof(object):
         eofax.long_name = 'eof_number'
         axlist = [eofax] + self._channels
         eofs = cdms2.createVariable(eofs,
-                                    id='eofs',
+                                    id='EOFs',
                                     axes=axlist,
                                     fill_value=self._missing_value)
         eofs.long_name = 'correlation_between_pcs_and_{:s}'.format(
@@ -322,7 +322,7 @@ class Eof(object):
 
         **Returns:**
 
-        *eofs*
+        *EOFs*
            A `cdms2` variable containing the ordered EOFs. The EOFs are
            numbered from 0 to *neofs* - 1.
 
@@ -330,7 +330,7 @@ class Eof(object):
 
         All EOFs::
 
-            eofs = solver.eofsAsCovariance()
+            EOFs = solver.eofsAsCovariance()
 
         The leading EOF::
 
