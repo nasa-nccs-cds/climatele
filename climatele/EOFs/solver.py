@@ -1,10 +1,12 @@
 from .cdms import Eof
-import cdutil, os
+import cdutil, os, time
 import os.path
 import cdms2 as cdms
 import cdtime, math
 from climatele.plotter import ResultsPlotter
 from climatele.project import *
+import numpy as np
+from scipy import ndimage
 
 class EOFSolver:
 
@@ -13,21 +15,37 @@ class EOFSolver:
         self.project = Project( outDir, _project )
         self.plotter = ResultsPlotter( self.project.directory )
 
-    def compute(self, data_variable, nModes, center=True, scale=True, removeCycle=True ):
+    def compute(self, data_variable, nModes, center=True, scale=True, removeCycle=True, detrend=True ):
         self.variable = data_variable                                                          # type: cdms.Variable
-        data = cdutil.ANNUALCYCLE.departures(self.variable) if removeCycle else self.variable
-        self.solver = Eof( data, weights='none', center=center, scale=scale )
+        decycled_data = self.remove_cycle(self.variable) if removeCycle else self.variable
+        normalized_data = self.remove_trend(decycled_data,100) if detrend else decycled_data
+        self.solver = Eof( normalized_data, weights='none', center=center, scale=scale )
         self.nModes = nModes
         print "Created solver"
 
+        eof_start = time.time()
         self.eofs = self.solver.eofs( neofs=nModes )
         self.pcs = self.solver.pcs().transpose()
-        print "Computed EOFs"
+        print "Computed EOFs in " + str(time.time()-eof_start) + " sec "
 
         self.fracs = self.solver.varianceFraction()
         self.pves = [ str(round(float(frac*100.),1)) + '%' for frac in self.fracs ]
         self.save_results()
         print "Saved results"
+
+    def remove_cycle(self, variable ):
+        start = time.time()
+        decycle = cdutil.ANNUALCYCLE.departures( variable )
+        print "completed decycle in " + str(time.time()-start) + " sec "
+        return decycle
+
+    def remove_trend(self, variable, window_size ):
+        start = time.time()
+#        trend = np.apply_along_axis( lambda m: np.convolve(m, np.ones((window_size,))/window_size, mode='valid'), axis=0, arr=variable )
+        trend = ndimage.convolve1d( variable.data, np.ones((window_size,))/float(window_size), 0, None, "nearest" )
+        detrend = variable - trend
+        print "completed detrend in " + str(time.time()-start) + " sec "
+        return detrend
 
     def save_results(self):
         self.savePCs()
