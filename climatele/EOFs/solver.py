@@ -4,19 +4,14 @@ import os.path
 import cdms2 as cdms
 import cdtime, math
 from climatele.plotter import ResultsPlotter
-PC = 0
-EOF = 1
+from climatele.project import *
 
 class EOFSolver:
 
-    def __init__(self, _project, _experiment, _outDir ):
-        self.project = _project
-        self.experiment = _experiment
-        self.directory = os.path.join( _outDir, self.project )
-        if not os.path.exists(self.directory):
-            os.makedirs(self.directory)
-        self.plotter = ResultsPlotter( self.directory )
-        self.exts = { PC: '-PCs.nc', EOF: '-EOFs.nc' }
+    def __init__(self, _project, experiment, outDir ):
+        self.experiment = experiment
+        self.project = Project( outDir, _project )
+        self.plotter = ResultsPlotter( self.project.directory )
 
     def compute(self, data_variable, nModes, center=True, scale=True, removeCycle=True ):
         self.variable = data_variable                                                          # type: cdms.Variable
@@ -38,11 +33,8 @@ class EOFSolver:
         self.savePCs()
         self.saveEOFs()
 
-    def outfilePath(self, rType ):
-        return os.path.join(self.directory, self.experiment + self.exts.get( rType, "Invalid response type: " + str(rType) ) )
-
     def savePCs(self):
-        outfilePath = os.path.join( self.directory, self.outfilePath(PC) )
+        outfilePath = self.project.outfilePath( self.experiment, PC )
         outfile = cdms.open(outfilePath, 'w')
         timeAxis = self.variable.getTime()
 
@@ -54,7 +46,7 @@ class EOFSolver:
         outfile.close()
 
     def saveEOFs(self):
-        outfilePath = os.path.join( self.directory, self.outfilePath(EOF)  )
+        outfilePath = self.project.outfilePath( self.experiment, EOF )
         outfile = cdms.open(outfilePath, 'w')
         axes = [ self.variable.getLatitude(), self.variable.getLongitude() ]
 
@@ -66,7 +58,7 @@ class EOFSolver:
         outfile.close()
 
     def plotEOFs( self, nCols ):
-        self.plotter.plotEOFs( self.outfilePath(EOF) , nCols )
+        self.plotter.plotEOFs( self.project.outfilePath( self.experiment, EOF ) , nCols )
 
     def plotPCs( self, nCols ):
-        self.plotter.plotPCs ( self.outfilePath(PC), nCols  )
+        self.plotter.plotPCs ( self.project.outfilePath( self.experiment, PC ), nCols  )
