@@ -42,7 +42,7 @@ class EOFSolver:
     def remove_trend(self, variable, window_size ):
         start = time.time()
 #        trend = np.apply_along_axis( lambda m: np.convolve(m, np.ones((window_size,))/window_size, mode='valid'), axis=0, arr=variable )
-        trend = ndimage.convolve1d( variable.data, np.ones((window_size,))/float(window_size), 0, None, "nearest" )
+        trend = ndimage.convolve1d( variable.data, np.ones((window_size,))/float(window_size), 0, None, "reflect" )
         detrend = variable - trend
         print "completed detrend in " + str(time.time()-start) + " sec "
         return detrend

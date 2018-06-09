@@ -45,29 +45,32 @@ class PlotMgr:
                     f = cdms2.openDataset(dataPath) # type: cdms2.dataset.CdmsFile
                     varNames = [ vn for vn in f.variables.keys() if not vn.endswith('bnds') ]  # type: List[str]
                     varNames.sort()
-                    fig = plt.figure()    # type: Figure
-                    iplot = 1
-                    nCols = min( len(varNames), numCols )
-                    nRows = math.ceil( len(varNames) / float(nCols) )
-                    for varName in varNames:  # type: str
-                        self.logger.info( "  ->  Plotting variable: " +  varName + ", subplot: " + str(iplot) )
-                        timeSeries = f( varName, squeeze=1 )  # type: cdms2.Variable
-                        long_name = timeSeries.attributes.get('long_name')
-                        datetimes = [datetime.datetime(x.year, x.month, x.day, x.hour, x.minute, int(x.second)) for x in timeSeries.getTime().asComponentTime()]
-                        dates = matplotlib.dates.date2num(datetimes)
-                        ax = fig.add_subplot( nRows, nCols, iplot )
-                        title = varName if long_name is None else long_name
-                        ax.set_title( title )
-                        ax.plot(dates, timeSeries.data )
-                        ax.xaxis.set_major_formatter( mdates.DateFormatter('%b %Y') )
-                        ax.grid(True)
-                        iplot = iplot + 1
-
-                    fig.autofmt_xdate()
-                    plt.show()
+                    variables = [ f( varName, squeeze=1 ) for varName in varNames ]
+                    self.mpl_timeplot_variables( variables, numCols )
                     return
                 else: time.sleep(1)
 
+    def mpl_timeplot_variables( self, variables, numCols = 4 ):
+        # type: (list[cdms2.tvariable.TransientVariable], int) -> int
+        fig = plt.figure()    # type: Figure
+        iplot = 1
+        nCols = min( len(variables), numCols )
+        nRows = math.ceil( len(variables) / float(nCols) )
+        for timeSeries in variables:
+            varName = timeSeries.id
+            self.logger.info( "  ->  Plotting variable: " +  varName + ", subplot: " + str(iplot) )
+            long_name = timeSeries.attributes.get('long_name')
+            datetimes = [datetime.datetime(x.year, x.month, x.day, x.hour, x.minute, int(x.second)) for x in timeSeries.getTime().asComponentTime()]
+            dates = matplotlib.dates.date2num(datetimes)
+            ax = fig.add_subplot( nRows, nCols, iplot )
+            title = varName if long_name is None else long_name
+            ax.set_title( title )
+            ax.plot(dates, timeSeries.data )
+            ax.xaxis.set_major_formatter( mdates.DateFormatter('%b %Y') )
+            ax.grid(True)
+            iplot = iplot + 1
+        fig.autofmt_xdate()
+        plt.show()
 
     def getAxis(self, axes, atype ):
         for axis in axes:
