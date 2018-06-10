@@ -5,6 +5,7 @@ import cdms2 as cdms
 import cdtime, math
 from climatele.plotter import ResultsPlotter
 from climatele.project import *
+from climatele.EOFs.times import ANNUALCYCLE
 import numpy as np
 from scipy import ndimage
 
@@ -15,41 +16,42 @@ class EOFSolver:
         self.project = Project( outDir, _project )
         self.plotter = ResultsPlotter( self.project.directory )
 
-    def compute(self, data_variable, nModes, center=True, scale=True, removeCycle=True, detrend=True ):
-        self.variable = data_variable                                                          # type: cdms.Variable
+    def compute(self, data_variable, nModes, **kwargs ):
+        removeCycle = kwargs.get( "decycle", True )
+        detrend = kwargs.get("detrend", True)
+        self.variable = data_variable                                       # type: cdms.tvariable.TransientVariable
         decycled_data = self.remove_cycle(self.variable) if removeCycle else self.variable
-        normalized_data = self.remove_trend(decycled_data,100) if detrend else decycled_data
-        self.solver = Eof( normalized_data, weights='none', center=center, scale=scale )
+        detrended_data = self.remove_trend(decycled_data,100) if detrend else decycled_data
         self.nModes = nModes
-        print "Created solver"
 
         eof_start = time.time()
+        self.solver = Eof( detrended_data, **kwargs )
         self.eofs = self.solver.eofs( neofs=nModes )
         self.pcs = self.solver.pcs().transpose()
-        print "Computed EOFs in " + str(time.time()-eof_start) + " sec "
-
         self.fracs = self.solver.varianceFraction()
         self.pves = [ str(round(float(frac*100.),1)) + '%' for frac in self.fracs ]
-        self.save_results()
-        print "Saved results"
+        print "Computed EOFs in " + str(time.time()-eof_start) + " sec "
 
-    def remove_cycle(self, variable ):
+        self.save_results()
+
+    def remove_cycle(self, variable, detrend_window = 0 ):
         start = time.time()
-        decycle = cdutil.ANNUALCYCLE.departures( variable )
+        decycle = ANNUALCYCLE.departures( variable, None, None, None, None, False, detrend_window )
         print "completed decycle in " + str(time.time()-start) + " sec "
         return decycle
 
     def remove_trend(self, variable, window_size ):
         start = time.time()
-#        trend = np.apply_along_axis( lambda m: np.convolve(m, np.ones((window_size,))/window_size, mode='valid'), axis=0, arr=variable )
         trend = ndimage.convolve1d( variable.data, np.ones((window_size,))/float(window_size), 0, None, "reflect" )
         detrend = variable - trend
         print "completed detrend in " + str(time.time()-start) + " sec "
         return detrend
 
     def save_results(self):
+        start = time.time()
         self.savePCs()
         self.saveEOFs()
+        print "Saved results in " + str(time.time() - start) + " sec "
 
     def savePCs(self):
         outfilePath = self.project.outfilePath( self.experiment, PC )
@@ -69,14 +71,14 @@ class EOFSolver:
         axes = [ self.variable.getLatitude(), self.variable.getLongitude() ]
 
         for iPlot in range(self.nModes):
-            eof = self.eofs[iPlot]  # type: cdms.Variable
+            eof = self.eofs[iPlot]  # type: cdms.tvariable.TransientVariable
             plot_title_str = 'EOF-' + str(iPlot) + ',' + self.experiment + ', ' + self.pves[iPlot]
-            v = cdms.createVariable(eof.data, None, 0, 0, None, float('nan'), None, axes,  {"pve": self.pves[iPlot], "long_name": plot_title_str}, "EOF-" + str(iPlot))
+            v = cdms.createVariable( eof.squeeze().data, None, 0, 0, None, float('nan'), None, axes,  { "pve": self.pves[iPlot], "long_name": plot_title_str }, "EOF-" + str(iPlot) )
             outfile.write(v)
         outfile.close()
 
     def plotEOFs( self, nCols ):
-        self.plotter.plotEOFs( self.project.outfilePath( self.experiment, EOF ) , nCols )
+        self.plotter.plotEOFs( self.project, self.experiment, nCols )
 
     def plotPCs( self, nCols ):
-        self.plotter.plotPCs ( self.project.outfilePath( self.experiment, PC ), nCols  )
+        self.plotter.plotPCs ( self.project, self.experiment, nCols  )

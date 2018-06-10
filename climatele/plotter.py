@@ -5,6 +5,7 @@ from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from climatele import Params
+from climatele.project import *
 import numpy as np
 import vcs, EzTemplate
 from typing import List, Any
@@ -15,13 +16,11 @@ class ResultsPlotter:
         self.dir = projectDir
         self.plotter = PlotMgr()
 
-    def plotPCs( self, result_file, nCols=4 ):
-        print "Plotting PC results from file " + result_file
-        self.plotter.mpl_timeplot( result_file, nCols )
+    def plotPCs( self, project, experiment, nCols=4 ):
+        self.plotter.mpl_timeplot( project, experiment, nCols )
 
-    def plotEOFs( self, result_file, nCols=4, smooth=True ):
-        print "Plotting EOF results from file " + result_file
-        self.plotter.mpl_spaceplot( result_file, nCols, 0, smooth )
+    def plotEOFs( self, project, experiment, nCols=4 ):
+        self.plotter.vcs_plot_eofs( project, experiment, nCols )
 
 class PlotMgr:
 
@@ -37,15 +36,13 @@ class PlotMgr:
         ax.plot( xvalues, data )
         plt.show()
 
-    def mpl_timeplot( self, dataPath, numCols = 4 ):
+    def mpl_timeplot( self, project, experiment, numCols = 4 ):
+        dataPath = project.outfilePath( experiment, PC )
         if dataPath:
             for k in range(0,30):
                 if( os.path.isfile(dataPath) ):
                     self.logger.info( "Plotting file: " +  dataPath )
-                    f = cdms2.openDataset(dataPath) # type: cdms2.dataset.CdmsFile
-                    varNames = [ vn for vn in f.variables.keys() if not vn.endswith('bnds') ]  # type: List[str]
-                    varNames.sort()
-                    variables = [ f( varName, squeeze=1 ) for varName in varNames ]
+                    variables = project.getVariables( experiment, PC )
                     self.mpl_timeplot_variables( variables, numCols )
                     return
                 else: time.sleep(1)
@@ -103,12 +100,12 @@ class PlotMgr:
         complement = number/largest_divisor
         return (complement,largest_divisor) if( largest_divisor > complement ) else (largest_divisor,complement)
 
-    def mpl_plot(self, dataPath, timeIndex=0, smooth=False):
+    def mpl_plot(self, dataPath, nCols=2 ):
         f = cdms2.openDataset(dataPath)
         var = f.variables.values()[0]
         naxes = self.getNAxes( var.shape )
         if( naxes == 1 ): self.mpl_timeplot( dataPath )
-        else: self.mpl_spaceplot( dataPath, timeIndex, smooth )
+        else: self.vcs_plot_eofs( dataPath, nCols )
 
     def getNAxes(self, shape ):
         naxes = 0
@@ -116,6 +113,11 @@ class PlotMgr:
             if( axisLen > 1 ):
                 naxes = naxes + 1
         return naxes
+
+    def vcs_plot_eofs(self, project, experiment, numCols=4 ):
+        # type: ( Project, str, int) -> int
+        vars = project.getVariables(experiment,EOF) # type: list[cdms2.fvariable.FileVariable]
+        self.vcs_plot_eof_variables(vars,numCols)
 
     def mpl_spaceplot( self, dataPath, numCols=4, timeIndex=0, smooth=False ):
         if dataPath:
@@ -198,11 +200,12 @@ class PlotMgr:
             else: time.sleep(1)
 
 
-    def plot_eofs( eofs, nMode, experiment_title, pve ):
+    def vcs_plot_eof_variables( self, variables, nCols=2 ):
         canvas = vcs.init(geometry=(1400,1000))
         canvas.open()
         canvas.setcolormap('bl_to_darkred')
-        M=EzTemplate.Multi(rows=nMode/2,columns=2)
+        nMode = len( variables )
+        M=EzTemplate.Multi(rows=math.ceil( nMode/float(nCols)), columns=nCols )
         M.margins.top=0.1
         M.margins.bottom=0.05
         M.spacing.horizontal=.05
@@ -217,15 +220,17 @@ class PlotMgr:
             cols = vcs.getcolors(iso.levels, range(16,240), split=0)
             iso.fillareacolors = cols
             iso.missing = 0
-            variable = eofs[iPlot]
-            percentage = str(round(float(pve[iPlot]*100.),1)) + '%'
-            plot_title_str = 'EOF mode ' + str(iPlot) + ',' + experiment_title +  ', ' + percentage
+            variable = variables[iPlot]  # type: cdms2.tvariable.TransientVariable
+            pve = variable.getattribute("pve")
+            title = variable.getattribute("long_name")
+            percentage = pve + '%'
+            plot_title_str = 'EOF mode ' + str(iPlot) + ',' + title +  ', PVE = ' + percentage
 
             p = vcs.createprojection()
             p.type = 'robinson'
             iso.projection = p
             t=M.get( legend='local' )
-            variable.setattribute( "long_name", plot_title_str )
+#            variable.setattribute( "long_name", plot_title_str )
             canvas.plot(variable,iso,t)
             canvas.png('/tmp/eof_analysis-mode{0}.png'.format(iPlot))
 

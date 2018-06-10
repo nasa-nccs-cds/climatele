@@ -32,6 +32,13 @@ class Project:
         dataset = self.getDataset( experiment, rType )
         return dataset(varName)
 
+    def getVariables( self, experiment, rType ):
+        # type: (str, int) -> list[cdms.fvariable.FileVariable]
+        dataset = self.getDataset( experiment, rType )
+        varnames = [ vname for vname in dataset.listvariables() if not vname.endswith("_bnds") ]
+        varnames.sort()
+        return [ dataset(varName) for varName in varnames ]
+
 
 
 

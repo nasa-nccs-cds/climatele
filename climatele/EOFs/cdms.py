@@ -11,7 +11,7 @@ from eofs.tools.cdms import weights_array, cdms2_name
 class Eof(object):
     """EOF analysis (meta-data enabled `cdms2` interface)"""
 
-    def __init__(self, dataset, weights=None, center=True, scale=True, ddof=1):
+    def __init__(self, dataset, **kwargs ):
         """Create an Eof object.
 
         The EOF solution is computed at initialization time. Method
@@ -81,6 +81,10 @@ class Eof(object):
             solver = Eof(dataset, weights='area')
 
         """
+        weights = kwargs.get( "weights", "none")
+        center = kwargs.get( "center", True )
+        scale = kwargs.get( "scale", True )
+        ddof = kwargs.get( "ddof", 1 )
         # Check that dataset is recognised by cdms2 as a variable.
         if not cdms2.isVariable(dataset):
             raise TypeError('the input data must be a cdms2 variable')

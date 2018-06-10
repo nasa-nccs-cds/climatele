@@ -22,23 +22,30 @@ start_time = cdtime.comptime(start_year)
 end_time = cdtime.comptime(end_year)
 solver = EOFSolver( projName, experiment, outDir )
 
+
+
 #------------------------------ READ DATA ------------------------------
 
 read_start = time.time()
 f = cdms.open(data_path)
 variable = f(varName,latitude=(latitiude,latitiude),longitude=(longitude,longitude), level=(level,level), squeeze=1 )  # type: cdms.tvariable.TransientVariable
 print "Completed data read in " + str(time.time()-read_start) + " sec "
-
-
 variable.setattribute( "long_name", experiment + ":  Raw Data" )
+detrend_window = 7
+
+detrended_variable0 = solver.remove_cycle( variable, detrend_window )
+detrended_variable0.setattribute( "long_name", experiment + ": Cycle/Trend removed" )
 
 decycled_variable = solver.remove_cycle( variable )
-decycled_variable.setattribute( "long_name", experiment + ": Cycle removed" )
+detrended_variable1 = solver.remove_trend( decycled_variable, detrend_window*12 )
+detrended_variable1.setattribute( "long_name", experiment + ": Cycle & Trend removed separately" )
 
-detrended_variable = solver.remove_trend( decycled_variable, 100 )
-detrended_variable.setattribute( "long_name", experiment + ": Trend removed" )
+diff0 = detrended_variable0-decycled_variable
+diff0.setattribute( "long_name",  "DIFF: Cycle/Trend removed" )
+diff1 = detrended_variable1-decycled_variable
+diff1.setattribute( "long_name", "DIFF: Cycle & Trend removed separately" )
 
 plotter = PlotMgr()
-plotter.mpl_timeplot_variables( [ variable, decycled_variable, detrended_variable ], 3 )
+plotter.mpl_timeplot_variables( [ diff0, diff1 ], 2 )
 
 
