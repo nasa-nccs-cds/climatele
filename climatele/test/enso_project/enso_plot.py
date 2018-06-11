@@ -26,7 +26,7 @@ while True:
     if not toks: break
     year = int( toks[0] )
     for month in months:
-        datetimes1.append(  datetime.datetime( year, month, 1, 1, 1, 1 ) )
+        datetimes1.append(  datetime.datetime( year, month, 15, 1, 1, 1 ) )
         enso_values.append( float( toks[month] ) )
 
 pcVarList = project.getVariableNames( experiment, PC )
