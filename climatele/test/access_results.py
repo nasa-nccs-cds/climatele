@@ -9,16 +9,17 @@ end_year = 2000
 varName = "ts"
 experiment = projectName + '_'+str(start_year)+'-'+str(end_year) + '_' + varName
 
-project = Project( outDir, projectName )
-plotter = ResultsPlotter( project.directory )
-plotResults = True
-nPlotCols = 2
+if __name__ == "__main__":
+    project = Project( outDir, projectName )
+    plotter = ResultsPlotter( project.directory )
+    plotResults = True
+    nPlotCols = 2
 
-if plotResults:
-    plotter.plotEOFs( project, experiment, nPlotCols )
-    plotter.plotPCs( project, experiment, nPlotCols )
+    if plotResults:
+        plotter.plotEOFs( project, experiment, nPlotCols )
+        plotter.plotPCs( project, experiment, nPlotCols )
 
-eofVarList = project.getVariableNames( experiment, EOF )
-eofVariable0 = project.getVariable( eofVarList[0], experiment, EOF)
-eofRawData0 = eofVariable0.data  # type: ma.masked_array
-print "EOF variable shape: " + str( eofRawData0.shape )
+    eofVarList = project.getVariableNames( experiment, EOF )
+    eofVariable0 = project.getVariable( eofVarList[0], experiment, EOF)
+    eofRawData0 = eofVariable0.data  # type: ma.masked_array
+    print "EOF variable shape: " + str( eofRawData0.shape )

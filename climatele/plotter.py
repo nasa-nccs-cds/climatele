@@ -48,7 +48,7 @@ class PlotMgr:
                 else: time.sleep(1)
 
     def mpl_timeplot_variables( self, variables, numCols = 4 ):
-        # type: (list[cdms2.tvariable.TransientVariable], int) -> int
+        # type: (list[cdms2.tvariable.TransientVariable], int) -> AxesSubplot
         fig = plt.figure()    # type: Figure
         iplot = 1
         nCols = min( len(variables), numCols )
@@ -68,6 +68,7 @@ class PlotMgr:
             iplot = iplot + 1
         fig.autofmt_xdate()
         plt.show()
+        return ax
 
     def getAxis(self, axes, atype ):
         for axis in axes:
