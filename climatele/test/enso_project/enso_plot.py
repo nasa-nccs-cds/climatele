@@ -1,15 +1,10 @@
 from climatele.plotter import PlotMgr
 from climatele.project import *
-import datetime, matplotlib
-import logging, os, time
-import cdms2, datetime, matplotlib, math
-from mpl_toolkits.basemap import Basemap
+import datetime, matplotlib, math
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from climatele.project import *
-import numpy as np
-import vcs, EzTemplate
-from typing import List, Any
+
 
 projectName = "MERRA2_EOFs"
 outDir = "/tmp/"
