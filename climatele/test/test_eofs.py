@@ -20,7 +20,7 @@ end_time = cdtime.comptime(end_year)
 
 read_start = time.time()
 f = cdms.open(data_path)
-variable = f(varName,latitude=(-80,80), level=(500,500) )  # type: cdms.AbstractVariable
+variable = f(varName,latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.AbstractVariable
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 
 #------------------------------ COMPUTE EOFS  ------------------------------
