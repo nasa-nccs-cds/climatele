@@ -1,5 +1,6 @@
 import cdms2 as cdms
 import cdtime, math, cdutil, time
+
 from climatele.EOFs.solver import EOFSolver
 from climatele.util.times import TimeSlicer, monthBasedSlicer, ASeason, Seasons, DJF
 
@@ -26,21 +27,7 @@ variable = f(varName,latitude=(-80,80), level=(500,500), time=(start_time,end_ti
 #slicer = Seasons("JJA")
 #sliced_var = slicer.get( variable )
 
-djfs = cdutil.DJF.climatology( variable )
-sliced_var = djfs
 
-print "Completed data read in " + str(time.time()-read_start) + " sec "
-
-#------------------------------ COMPUTE EOFS  ------------------------------
-
-solver = EOFSolver( project, experiment, outDir )
-solver.compute( sliced_var, nModes )
-print "Completed computing Eofs"
-
-#------------------------------ PLOT RESULTS   ------------------------------
-
-solver.plotEOFs(2)
-solver.plotPCs(2)
 
 
 
