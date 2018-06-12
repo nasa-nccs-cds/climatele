@@ -1,13 +1,10 @@
 from .cdms import Eof
-import cdutil, os, time
-import os.path
-import cdms2 as cdms
-import cdtime, math
+import time
 from climatele.plotter import ResultsPlotter
 from climatele.project import *
-from climatele.EOFs.times import ANNUALCYCLE
+from climatele.util.times import ANNUALCYCLE
 import numpy as np
-from scipy import ndimage
+
 
 class EOFSolver:
 
@@ -18,7 +15,7 @@ class EOFSolver:
 
     def compute(self, data_variable, nModes, **kwargs ):
         removeCycle = kwargs.get( "decycle", True )
-        detrend = kwargs.get("detrend", True)
+        detrend = kwargs.get( "detrend", False )
         self.variable = data_variable                                       # type: cdms.tvariable.TransientVariable
         decycled_data = self.remove_cycle(self.variable) if removeCycle else self.variable
         detrended_data = self.remove_trend(decycled_data,100) if detrend else decycled_data
@@ -41,6 +38,7 @@ class EOFSolver:
         return decycle
 
     def remove_trend(self, variable, window_size ):
+        from scipy import ndimage
         start = time.time()
         trend = ndimage.convolve1d( variable.data, np.ones((window_size,))/float(window_size), 0, None, "reflect" )
         detrend = variable - trend
