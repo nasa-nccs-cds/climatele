@@ -514,7 +514,7 @@ class TimeSlicer:
 
         if order[0] != 't': sliced = sliced(order='t...')
         order2 = sliced.getOrder(ids=1)
-        weights = self.slicer(sliced.getTime(), slicerarg) # if detrend_window <= 0 else None
+        weights = self.slicer(sliced.getTime(), slicerarg)
         if ref is None:
             if sum is False:
                 if detrend_window <= 0:
