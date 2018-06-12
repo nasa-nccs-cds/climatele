@@ -1,8 +1,6 @@
 import cdms2 as cdms
-import cdtime, math, cdutil, time
+import cdtime, cdutil, time
 from climatele.EOFs.solver import EOFSolver
-from climatele.util.times import TimeSlicer, monthBasedSlicer, ASeason, Seasons, DJF
-
 
 #------------------------------ SET PARAMETERS   ------------------------------
 
