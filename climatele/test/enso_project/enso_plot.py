@@ -26,7 +26,7 @@ while True:
     if not toks: break
     year = int( toks[0] )
     for month in months:
-        datetimes1.append(  datetime.datetime( year, month, 1, 1, 1, 1 ) )
+        datetimes1.append(  datetime.datetime( year, month, 15, 1, 1, 1 ) )
         enso_values.append( float( toks[month] ) )
 
 pcVarList = project.getVariableNames( experiment, PC )
@@ -39,7 +39,7 @@ ax = fig.add_subplot( 1, 1, 1 )
 title = varName if long_name is None else long_name
 ax.set_title( title )
 
-datetimes0 = [datetime.datetime(x.year, x.month, x.day, x.hour, x.minute, int(x.second)) for x in pcVariable.getTime().asComponentTime()]
+datetimes0 = [datetime.datetime( x.year, x.month, x.day, 1, 1, 1 ) for x in pcVariable.getTime().asComponentTime()]
 dates0 = matplotlib.dates.date2num(datetimes0)
 ax.plot(dates0, ( pcVariable.data * -0.008 ) + 0.4, label = "PC Timeseries for first EOF" )
 
