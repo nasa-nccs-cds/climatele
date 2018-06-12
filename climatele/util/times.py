@@ -3,7 +3,7 @@ import numpy
 import MV2
 import cdms2, cdtime, string, types, numpy.ma, sys
 import numpy as np
-from scipy import ndimage
+# from scipy import ndimage
 import cdat_info
 
 def centroid(msk, bounds, coords=None):
@@ -520,12 +520,14 @@ class TimeSlicer:
                 if detrend_window <= 0:
                     ref =   numpy.ma.average(sliced, axis=0, weights=zip(*weights[2])[0] )
                 else:
-                    ref = ndimage.convolve1d( sliced, np.ones((detrend_window,))/float(detrend_window), 0, None, "reflect" )
+                    ref =   numpy.ma.average(sliced, axis=0, weights=zip(*weights[2])[0] )
+#                    ref = ndimage.convolve1d( sliced, np.ones((detrend_window,))/float(detrend_window), 0, None, "reflect" )
             else:
                 if detrend_window <= 0:
                     ref = numpy.ma.sum(sliced, axis=0, weights=zip(*weights[2])[0])
                 else:
-                    ref = ndimage.convolve1d( sliced, np.ones((detrend_window,)), 0, None, "reflect" )
+                    ref = numpy.ma.sum(sliced, axis=0, weights=zip(*weights[2])[0])
+#                    ref = ndimage.convolve1d( sliced, np.ones((detrend_window,)), 0, None, "reflect" )
         elif len(order2[1:]) > 0:
             ref = ref(order=order2[1:])
 

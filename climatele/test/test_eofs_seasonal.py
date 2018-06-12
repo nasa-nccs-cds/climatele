@@ -1,7 +1,6 @@
 import cdms2 as cdms
 import cdtime, math, cdutil, time
 from climatele.EOFs.solver import EOFSolver
-from climatele.util.times import TimeSlicer
 
 #------------------------------ SET PARAMETERS   ------------------------------
 
@@ -22,8 +21,10 @@ end_time = cdtime.comptime(end_year)
 read_start = time.time()
 f = cdms.open(data_path)
 variable = f(varName,latitude=(-80,80), level=(500,500) )  # type: cdms.AbstractVariable
-slicer = TimeSlicer()
-sliced_var = slicer.get( variable, "JJA" )
+#slicer = TimeSlicer()
+#sliced_var = slicer.get( variable, "JJA" )
+sliced_var = variable
+
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 
 #------------------------------ COMPUTE EOFS  ------------------------------
