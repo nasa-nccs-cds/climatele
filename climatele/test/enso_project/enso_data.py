@@ -1,5 +1,15 @@
 import matplotlib.pyplot as plt
 from climatele.test.access_results import *
+from climatele.project import *
+
+projectName = "MERRA2_EOFs"
+outDir = "/tmp/"
+start_year = 1980
+end_year = 2000
+varName = "ts"
+experiment = projectName + '_'+str(start_year)+'-'+str(end_year) + '_' + varName
+project = Project( outDir, projectName )
+file_path = os.path.dirname(os.path.realpath(__file__))
 
 enso = open("enso_data.txt", "r")
 text = enso.read()
