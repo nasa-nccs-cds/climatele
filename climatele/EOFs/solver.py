@@ -2,7 +2,7 @@ from .cdms import Eof
 import time
 from climatele.plotter import ResultsPlotter
 from climatele.project import *
-from climatele.EOFs.times import ANNUALCYCLE
+from cdutil.times import ANNUALCYCLE
 import numpy as np
 
 
