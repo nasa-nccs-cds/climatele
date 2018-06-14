@@ -81,7 +81,7 @@ class Collection:
 
     def file_list(self):
         # type: () -> list[File]
-        return self._files.values()
+        return self.files.values()
 
 
 if __name__ == "__main__":
