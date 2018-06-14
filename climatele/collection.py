@@ -67,7 +67,7 @@ class Collection:
             if not line: break
             toks = line.split(";")
             type = toks[0]
-            if type == 'P': self.parms[ toks[1].strip() ] = ";".join( toks[2:] )
+            if type == 'P': self.parms[ toks[1].strip() ] = ";".join( toks[2:] ).strip()
             elif type == 'A': self.axes[ toks[3].strip() ] = Axis( *toks[1:] )
             elif type == 'C': self.dims[ toks[1].strip() ] = int( toks[2].strip() )
             elif type == 'V': self.vars[ toks[1].strip() ] = Variable( *toks[1:] )
