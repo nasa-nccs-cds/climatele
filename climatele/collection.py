@@ -67,11 +67,11 @@ class Collection:
             if not line: break
             toks = line.split(";")
             type = toks[0]
-            if type == 'P': self.parms[ toks[1] ] = ";".join( toks[2:] )
-            elif type == 'A': self.axes[ toks[3] ] = Axis( *toks[1:] )
-            elif type == 'C': self.dims[ toks[1] ] = int( toks[2] )
-            elif type == 'V': self.vars[ toks[1] ] = Variable( *toks[1:] )
-            elif type == 'F': self.files[ toks[1] ] = File( self, *toks[1:] )
+            if type == 'P': self.parms[ toks[1].strip() ] = ";".join( toks[2:] )
+            elif type == 'A': self.axes[ toks[3].strip() ] = Axis( *toks[1:] )
+            elif type == 'C': self.dims[ toks[1].strip() ] = int( toks[2].strip() )
+            elif type == 'V': self.vars[ toks[1].strip() ] = Variable( *toks[1:] )
+            elif type == 'F': self.files[ toks[1].strip() ] = File( self, *toks[1:] )
 
     def parm(self, key ):
         return self.parms.get( key, "" )
