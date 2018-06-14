@@ -4,29 +4,29 @@ import collections, sortedcontainers
 
 class Variable:
    def __init__(self, *args ):
-       self.name = args[0].trim()
-       self.long_name = args[1].trim()
-       self.dods_name = args[2].trim()
-       self.description = args[3].trim()
-       self.shape = [ int(sval.trim()) for sval in args[4].split(",") ]
+       self.name = args[0].strip()
+       self.long_name = args[1].strip()
+       self.dods_name = args[2].strip()
+       self.description = args[3].strip()
+       self.shape = [ int(sval.strip()) for sval in args[4].split(",") ]
        self.resolution = dict( args[5] )
-       self.dims = args[6].trim().split(' ')
-       self.units = args[7].trim()
+       self.dims = args[6].strip().split(' ')
+       self.units = args[7].strip()
 
 class Axis:
    def __init__(self, *args ):
-       self.name = args[0].trim()
-       self.long_name = args[1].trim()
-       self.type = args[2].trim()
-       self.length = int(args[3].trim())
-       self.units = args[4].trim()
-       self.bounds = [ float(args[5].trim()), float(args[6].trim()) ]
+       self.name = args[0].strip()
+       self.long_name = args[1].strip()
+       self.type = args[2].strip()
+       self.length = int(args[3].strip())
+       self.units = args[4].strip()
+       self.bounds = [ float(args[5].strip()), float(args[6].strip()) ]
 
 class File:
    def __init__(self, *args ):
-       self.start_time = float(args[0].trim())
-       self.size = int(args[1].trim())
-       self.path = args[2].trim()
+       self.start_time = float(args[0].strip())
+       self.size = int(args[1].strip())
+       self.path = args[2].strip()
 
 class CollectionFactory:
 
