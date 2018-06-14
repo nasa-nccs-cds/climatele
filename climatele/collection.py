@@ -8,6 +8,7 @@ def parse_dict( dict_spec ):
         result[ elem_toks[0].strip() ] = elem_toks[1].strip()
 
 class Variable:
+
    def __init__(self, *args ):
        self.name = args[0].strip()
        self.long_name = args[1].strip()
@@ -19,6 +20,7 @@ class Variable:
        self.units = args[7].strip()
 
 class Axis:
+
    def __init__(self, *args ):
        self.name = args[0].strip()
        self.long_name = args[1].strip()
@@ -28,11 +30,16 @@ class Axis:
        self.bounds = [ float(args[5].strip()), float(args[6].strip()) ]
 
 class File:
-   def __init__(self, *args ):
+
+    def __init__(self, _collection, *args ):
+       self.collection = _collection
        self.start_time = float(args[0].strip())
        self.size = int(args[1].strip())
-       self.path = args[2].strip()
+       self.relpath = args[2].strip()
        self.date = datetime.datetime.utcfromtimestamp(self.start_time*60)
+
+    def getPath(self):
+        return os.path.join( self.collection.parm("base.path"), self.relpath )
 
 class Collection:
 
@@ -64,10 +71,13 @@ class Collection:
             elif type == 'A': self.axes[ toks[3] ] = Axis( *toks[1:] )
             elif type == 'C': self.dims[ toks[1] ] = int( toks[2] )
             elif type == 'V': self.vars[ toks[1] ] = Variable( *toks[1:] )
-            elif type == 'F': self.files[ toks[1] ] = File( *toks[1:] )
+            elif type == 'F': self.files[ toks[1] ] = File( self, *toks[1:] )
+
+    def parm(self, key ):
+        return self.parms.get( key, "" )
 
 
 if __name__ == "__main__":
     collection = Collection.new( "cip_merra2_mth-atmos-ts" )
     for file in collection.files.values():
-        print str(file.date) +": " + file.path
+        print str(file.date) +": " + file.getPath()
