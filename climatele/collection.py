@@ -62,7 +62,7 @@ class Collection:
         self.axes = {}
         self.dims = {}
         self.vars = {}
-        self.parseAggFile()
+        self._parseAggFile()
 
     def _parseAggFile(self):
         file = open( self.spec, "r" )
