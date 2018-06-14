@@ -1,6 +1,5 @@
 import os, datetime
-import cdms2 as cdms
-import collections, sortedcontainers
+import sortedcontainers
 
 def parse_dict( dict_spec ):
     result = {}
@@ -35,18 +34,15 @@ class File:
        self.path = args[2].strip()
        self.date = datetime.datetime.utcfromtimestamp(self.start_time*60)
 
-class CollectionFactory:
-
-    def __init__(self):
-        self.cacheDir = os.environ['EDAS_CACHE_DIR']
-        self.baseDir = os.path.join( self.cacheDir, "collections", "agg" )
-
-    def get( self, name ):
-        # type: (str) -> Collection
-        agg_file = os.path.join( self.baseDir, name + ".ag1" )
-        return Collection( name, agg_file )
-
 class Collection:
+
+    cacheDir = os.environ['EDAS_CACHE_DIR']
+    baseDir = os.path.join( cacheDir, "collections", "agg" )
+
+    @classmethod
+    def new(cls, name ):
+        agg_file = os.path.join( cls.baseDir, name + ".ag1" )
+        return Collection( name, agg_file )
 
     def __init__(self, _name, _agg_file ):
         self.name = _name
@@ -72,7 +68,6 @@ class Collection:
 
 
 if __name__ == "__main__":
-    colls = CollectionFactory()
-    collection = colls.get( "cip_merra2_mth-atmos-ts" )
+    collection = Collection.new( "cip_merra2_mth-atmos-ts" )
     for file in collection.files.values():
         print str(file.date) +": " + file.path
