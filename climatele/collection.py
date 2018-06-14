@@ -1,11 +1,10 @@
-import os
+import os, datetime
 import cdms2 as cdms
 import collections, sortedcontainers
 
 def parse_dict( dict_spec ):
     result = {}
-    elems = dict_spec.split(",")
-    for elem in elems:
+    for elem in dict_spec.split(","):
         elem_toks = elem.split(":")
         result[ elem_toks[0].strip() ] = elem_toks[1].strip()
 
@@ -34,6 +33,7 @@ class File:
        self.start_time = float(args[0].strip())
        self.size = int(args[1].strip())
        self.path = args[2].strip()
+       self.date = datetime.datetime.utcfromtimestamp(self.start_time*60)
 
 class CollectionFactory:
 
@@ -50,7 +50,7 @@ class Collection:
 
     def __init__(self, _name, _agg_file ):
         self.name = _name
-        self.file = _agg_file
+        self.spec = _agg_file
         self.parms = {}
         self.files = sortedcontainers.SortedDict()
         self.axes = {}
@@ -74,3 +74,5 @@ class Collection:
 if __name__ == "__main__":
     colls = CollectionFactory()
     collection = colls.get( "cip_merra2_mth-atmos-ts" )
+    for file in collection.files.values():
+        print str(file.date) +": " + file.path
