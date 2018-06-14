@@ -59,7 +59,7 @@ class Collection:
         self._parseAggFile()
 
     def _parseAggFile(self):
-        file = open( self.file, "r" )
+        file = open( self.spec, "r" )
         for line in file.readlines():
             if not line: break
             toks = line.split(";")
