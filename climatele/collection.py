@@ -39,7 +39,10 @@ class File:
        self.date = datetime.datetime.utcfromtimestamp(self.start_time*60)
 
     def getPath(self):
-        return os.path.join( self.collection.parm("base.path"), self.relpath )
+        return os.path.join( self.parm("base.path"), self.relpath )
+
+    def parm(self, key ):
+        return self.collection.parm( key )
 
 class Collection:
 
@@ -59,7 +62,7 @@ class Collection:
         self.axes = {}
         self.dims = {}
         self.vars = {}
-        self._parseAggFile()
+        self.parseAggFile()
 
     def _parseAggFile(self):
         file = open( self.spec, "r" )
@@ -75,6 +78,10 @@ class Collection:
 
     def parm(self, key ):
         return self.parms.get( key, "" )
+
+    def file_list(self):
+        # type: () -> list[File]
+        return self._files.values()
 
 
 if __name__ == "__main__":

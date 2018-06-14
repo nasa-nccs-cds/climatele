@@ -2,7 +2,7 @@ import cdms2 as cdms
 import cdtime, math, cdutil, time
 from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
-from climatele.collection import Collection
+from climatele.collection import Collection, File
 
 #------------------------------ SET PARAMETERS   ------------------------------
 
@@ -22,8 +22,9 @@ end_time = cdtime.comptime(end_year)
 
 read_start = time.time()
 collection = Collection.new( "cip_merra2_mth-atmos-ts" )
+files = collection.file_list()
 
-f = cdms.open(data_path)
+f = cdms.open( files[0].getPath() )
 variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 
