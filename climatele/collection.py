@@ -2,6 +2,13 @@ import os
 import cdms2 as cdms
 import collections, sortedcontainers
 
+def parse_dict( dict_spec ):
+    result = {}
+    elems = dict_spec.split(",")
+    for elem in elems:
+        elem_toks = elem.split(":")
+        result[ elem_toks[0].strip() ] = elem_toks[1].strip()
+
 class Variable:
    def __init__(self, *args ):
        self.name = args[0].strip()
@@ -9,7 +16,7 @@ class Variable:
        self.dods_name = args[2].strip()
        self.description = args[3].strip()
        self.shape = [ int(sval.strip()) for sval in args[4].split(",") ]
-       self.resolution = dict( args[5] )
+       self.resolution = parse_dict( args[5] )
        self.dims = args[6].strip().split(' ')
        self.units = args[7].strip()
 
