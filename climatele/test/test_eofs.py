@@ -1,6 +1,7 @@
 import cdms2 as cdms
 import cdtime, math, cdutil, time
 from climatele.EOFs.solver import EOFSolver
+from climatele.plotter import MPL, VCS
 
 #------------------------------ SET PARAMETERS   ------------------------------
 
@@ -26,12 +27,12 @@ print "Completed data read in " + str(time.time()-read_start) + " sec "
 #------------------------------ COMPUTE EOFS  ------------------------------
 
 solver = EOFSolver( project, experiment, outDir )
-solver.compute( variable, nModes, detrend=True )
+solver.compute( variable, nModes, detrend=True, scale=True )
 print "Completed computing Eofs"
 
 #------------------------------ PLOT RESULTS   ------------------------------
 
-solver.plotEOFs(2)
+solver.plotEOFs( 2, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
 solver.plotPCs(2)
 
 

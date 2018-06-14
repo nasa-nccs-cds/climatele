@@ -10,6 +10,9 @@ import numpy as np
 import vcs, EzTemplate
 from typing import List, Any
 
+MPL = 0
+VCS = 1
+
 class ResultsPlotter:
 
     def __init__(self, projectDir ):
@@ -19,8 +22,10 @@ class ResultsPlotter:
     def plotPCs( self, project, experiment, nCols=4 ):
         self.plotter.mpl_timeplot( project, experiment, nCols )
 
-    def plotEOFs( self, project, experiment, nCols=4 ):
-        self.plotter.vcs_plot_eofs( project, experiment, nCols )
+    def plotEOFs( self, project, experiment, nCols=4, plotPkg=VCS ):
+        if( plotPkg == VCS ): self.plotter.vcs_plot_eofs( project, experiment, nCols )
+        else: self.plotter.mpl_spaceplot( project.outfilePath( experiment, EOF ), nCols, 0 , True )
+
 
 class PlotMgr:
 
