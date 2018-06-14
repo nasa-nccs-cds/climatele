@@ -34,10 +34,6 @@ solver = EOFSolver( project, experiment, outDir )
 solver.compute( variable, nModes, detrend=True, scale=True )
 print "Completed computing Eofs"
 
-#------------------------------ PLOT RESULTS   ------------------------------
-
-solver.plotEOFs( 2, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
-solver.plotPCs(2)
 
 
 

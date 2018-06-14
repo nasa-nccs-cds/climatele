@@ -62,6 +62,7 @@ class EOFSolver:
             v = cdms.createVariable(pc.data, None, 0, 0, None, float('nan'), None, [timeAxis],  {"pve": self.pves[iPlot], "long_name": plot_title_str}, "PC-" + str(iPlot))
             outfile.write(v)
         outfile.close()
+        print "Saved PCs to file " + outfilePath
 
     def saveEOFs(self):
         outfilePath = self.project.outfilePath( self.experiment, EOF )
@@ -74,6 +75,7 @@ class EOFSolver:
             v = cdms.createVariable( eof.squeeze().data, None, 0, 0, None, float('nan'), None, axes,  { "pve": self.pves[iPlot], "long_name": plot_title_str }, "EOF-" + str(iPlot) )
             outfile.write(v)
         outfile.close()
+        print "Saved EOFs to file " + outfilePath
 
     def plotEOFs( self, nCols, plotPkg ):
         self.plotter.plotEOFs( self.project, self.experiment, nCols, plotPkg )
