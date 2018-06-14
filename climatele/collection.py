@@ -1,7 +1,7 @@
 import os
 import cdms2 as cdms
 
-class Collections:
+class CollectionFactory:
 
     def __init__(self):
         self.cacheDir = os.environ['EDAS_CACHE_DIR']
@@ -10,9 +10,6 @@ class Collections:
     def getCollection( self, name ):
         agg_file = os.path.join( self.baseDir, name + ".ag1" )
         return Collection( name, agg_file )
-
-
-
 
 class Collection:
 
@@ -33,5 +30,5 @@ class Collection:
 
 
 if __name__ == "__main__":
-    collections = Collections()
-    collection = collections.get( "cip_merra2_mth-atmos-ts" )
+    colls = CollectionFactory()
+    collection = colls.get( "cip_merra2_mth-atmos-ts" )
