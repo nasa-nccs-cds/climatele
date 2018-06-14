@@ -7,7 +7,8 @@ class CollectionFactory:
         self.cacheDir = os.environ['EDAS_CACHE_DIR']
         self.baseDir = os.path.join( self.cacheDir, "collections", "agg" )
 
-    def getCollection( self, name ):
+    def get( self, name ):
+        # type: (str) -> Collection
         agg_file = os.path.join( self.baseDir, name + ".ag1" )
         return Collection( name, agg_file )
 
