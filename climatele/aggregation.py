@@ -16,7 +16,7 @@ class Collection:
     def new(cls, name ):
         # type: (str) -> Collection
         spec_file = os.path.join( cls.baseDir, name + ".csv" )
-        return Aggregation(name, spec_file)
+        return Collection(name, spec_file)
 
     def __init__(self, _name, _spec_file ):
         self.name = _name
