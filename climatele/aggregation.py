@@ -7,6 +7,40 @@ def parse_dict( dict_spec ):
         elem_toks = elem.split(":")
         result[ elem_toks[0].strip() ] = elem_toks[1].strip()
 
+class Collection:
+
+    cacheDir = os.environ['EDAS_CACHE_DIR']
+    baseDir = os.path.join( cacheDir, "collections", "agg" )
+
+    @classmethod
+    def new(cls, name ):
+        # type: (str) -> Collection
+        spec_file = os.path.join( cls.baseDir, name + ".csv" )
+        return Aggregation(name, spec_file)
+
+    def __init__(self, _name, _spec_file ):
+        self.name = _name
+        self.spec = _spec_file
+        self.aggs = {}
+        self.parms = {}
+        self._parseSpecFile()
+
+    def _parseSpecFile(self):
+        file = open( self.spec, "r" )
+        for line in file.readlines():
+            if not line: break
+            if( line[0] == '#' ):
+                toks = line[1:].split(",")
+                self.parms[toks[0].strip()] = ",".join(toks[1:]).strip()
+            else:
+                toks = line.split(",")
+                self.aggs[toks[0].strip()] = ",".join(toks[1:]).strip()
+
+    def getAggregation( self, varName ):
+        # type: (str) -> Aggregation
+        agg_file = self.aggs.get( varName )
+        return Aggregation( self.name, agg_file )
+
 class Variable:
 
    def __init__(self, *args ):
@@ -44,15 +78,10 @@ class File:
     def parm(self, key ):
         return self.collection.parm( key )
 
-class Collection:
+class Aggregation:
 
     cacheDir = os.environ['EDAS_CACHE_DIR']
     baseDir = os.path.join( cacheDir, "collections", "agg" )
-
-    @classmethod
-    def new(cls, name ):
-        agg_file = os.path.join( cls.baseDir, name + ".ag1" )
-        return Collection( name, agg_file )
 
     def __init__(self, _name, _agg_file ):
         self.name = _name
@@ -85,6 +114,6 @@ class Collection:
 
 
 if __name__ == "__main__":
-    collection = Collection.new( "cip_merra2_mth-atmos-ts" )
+    collection = Aggregation.new("cip_merra2_mth-atmos-ts")
     for file in collection.files.values():
         print str(file.date) +": " + file.getPath()
