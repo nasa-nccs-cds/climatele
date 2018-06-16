@@ -29,7 +29,7 @@ files = agg.pathList()
 
 ds = MFDataset( files )  # type: MFDataset
 variable = ds.variables[varName] # type: Variable
-print  "Variable, shape: " + variable.shape
+print  "Variable, shape: " + str( variable.shape )
 
 f = cdms.open( files[0] )
 variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
