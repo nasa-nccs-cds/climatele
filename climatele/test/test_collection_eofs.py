@@ -25,12 +25,13 @@ end_time = cdtime.comptime(end_year)
 read_start = time.time()
 collection = Collection.new("cip_merra2_mth")
 agg =  collection.getAggregation( varName )
-files = agg.file_list()
+files = agg.pathList()
 
+print "files: " + str( files )
 ds = MFDataset( files )
 print "MFDataset: " + str( ds.variables.keys )
 
-f = cdms.open( files[0].getPath() )
+f = cdms.open( files[0] )
 variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 

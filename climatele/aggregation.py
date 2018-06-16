@@ -106,6 +106,10 @@ class Aggregation:
     def parm(self, key ):
         return self.parms.get( key, "" )
 
-    def file_list(self):
+    def fileList(self):
         # type: () -> list[File]
         return self.files.values()
+
+    def pathList(self):
+        # type: () -> list[str]
+        return [ file.getPath() for file in self.files.values() ]
