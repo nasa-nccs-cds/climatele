@@ -25,7 +25,8 @@ end_time = cdtime.comptime(end_year)
 read_start = time.time()
 collection = Collection.new("cip_merra2_mth")
 variable = collection.getVariable( varName )
-lats = variable.getLatitude()[:]
+latsVar = variable.getLatitude()
+lats = latsVar[:]
 subset = variable[ 80 > lats > -80 ]
 print  "Variable, subset shape: " + str( subset.shape )
 
