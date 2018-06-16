@@ -38,7 +38,8 @@ class Collection:
 
     def getAggregation( self, varName ):
         # type: (str) -> Aggregation
-        agg_file = self.aggs.get( varName )
+        agg_id = self.aggs.get( varName )
+        agg_file = os.path.join( Collection.baseDir, agg_id + ".ag1")
         return Aggregation( self.name, agg_file )
 
 class Variable:
@@ -80,9 +81,6 @@ class File:
 
 class Aggregation:
 
-    cacheDir = os.environ['EDAS_CACHE_DIR']
-    baseDir = os.path.join( cacheDir, "collections", "agg" )
-
     def __init__(self, _name, _agg_file ):
         self.name = _name
         self.spec = _agg_file
@@ -111,9 +109,3 @@ class Aggregation:
     def file_list(self):
         # type: () -> list[File]
         return self.files.values()
-
-
-if __name__ == "__main__":
-    collection = Aggregation.new("cip_merra2_mth-atmos-ts")
-    for file in collection.files.values():
-        print str(file.date) +": " + file.getPath()
