@@ -24,14 +24,13 @@ end_time = cdtime.comptime(end_year)
 
 read_start = time.time()
 collection = Collection.new("cip_merra2_mth")
-agg =  collection.getAggregation( varName )
-files = agg.pathList()
+variable = collection.getVariable( varName )
+lats = variable.getLatitude()[:]
+subset = variable[ 80 > lats > -80 ]
+print  "Variable, subset shape: " + str( subset.shape )
 
-ds = MFDataset( files )  # type: MFDataset
-variable = ds.variables[varName] # type: Variable
-print  "Variable, shape: " + str( variable.shape )
-
-f = cdms.open( files[0] )
+agg = collection.getAggregation( varName )
+f = cdms.open( agg.pathList()[0] )
 variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 

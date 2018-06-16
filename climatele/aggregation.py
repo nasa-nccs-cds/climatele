@@ -1,5 +1,6 @@
 import os, datetime
 import sortedcontainers
+from netCDF4 import MFDataset, Variable
 
 def parse_dict( dict_spec ):
     result = {}
@@ -41,6 +42,10 @@ class Collection:
         agg_id = self.aggs.get( varName )
         agg_file = os.path.join( Collection.baseDir, agg_id + ".ag1")
         return Aggregation( self.name, agg_file )
+
+    def getVariable( self, varName ):
+        agg =  self.getAggregation( varName )
+        return agg.getVariable(varName)
 
 class Variable:
 
@@ -113,3 +118,12 @@ class Aggregation:
     def pathList(self):
         # type: () -> list[str]
         return [ file.getPath() for file in self.files.values() ]
+
+    def getVariable( self, varName ):
+        # type: (str) -> Variable
+        ds = self.getDataset()
+        return ds.variables[varName]
+
+    def getDataset( self ):
+        # type: () -> MFDataset
+        return MFDataset( self.pathList() )
