@@ -1,6 +1,6 @@
 import cdms2 as cdms
 import numpy as np
-from netCDF4 import MFDataset
+from netCDF4 import MFDataset, Variable
 import cdtime, math, cdutil, time
 from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
@@ -27,9 +27,9 @@ collection = Collection.new("cip_merra2_mth")
 agg =  collection.getAggregation( varName )
 files = agg.pathList()
 
-print "files: " + str( files )
-ds = MFDataset( files )
-print "MFDataset: " + str( ds.variables.keys )
+ds = MFDataset( files )  # type: MFDataset
+variable = ds.variables[varName] # type: Variable
+print  "Variable, shape: " + variable.shape
 
 f = cdms.open( files[0] )
 variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
