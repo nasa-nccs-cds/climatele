@@ -9,11 +9,11 @@ from climatele.aggregation import Aggregation, Collection
 #------------------------------ SET PARAMETERS   ------------------------------
 
 project = "MERRA2_EOFs"
-varName = "ts"
-collection = 'cip_merra2_mth-atmos-ts'
+varName = "tas"
+collectionName = 'giss_r1i1p1'
 outDir = "/tmp/"
-start_year = 1980
-end_year = 2000
+start_year = 1800
+end_year = 2100
 nModes = 4
 
 experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_' + varName
@@ -23,24 +23,12 @@ end_time = cdtime.comptime(end_year)
 #------------------------------ READ DATA ------------------------------
 
 read_start = time.time()
-collection = Collection.new("cip_merra2_mth")
-variable = collection.getVariable( varName )
-latsVar = variable.getLatitude()
-lats = latsVar[:]
-subset = variable[ 80 > lats > -80 ]
-print  "Variable, subset shape: " + str( subset.shape )
+collection = Collection.new( collectionName )
+agg = collection.getAggregation(collectionName)
+dset = agg.getDataset()
+axis = agg.getAxis('x')
 
-agg = collection.getAggregation( varName )
-f = cdms.open( agg.pathList()[0] )
-variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.fvariable.FileVariable
-print "Completed data read in " + str(time.time()-read_start) + " sec "
-
-#------------------------------ COMPUTE EOFS  ------------------------------
-
-solver = EOFSolver( project, experiment, outDir )
-solver.compute( variable, nModes, detrend=True, scale=True )
-print "Completed computing Eofs"
-
+print str( axis )
 
 
 
