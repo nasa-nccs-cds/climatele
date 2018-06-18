@@ -13,7 +13,7 @@ start_year = 1980
 end_year = 2015
 nModes = 32
 
-experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + nModes + "_" + varName
+experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
 start_time = cdtime.comptime(start_year)
 end_time = cdtime.comptime(end_year)
 
@@ -32,8 +32,8 @@ print "Completed computing Eofs"
 
 #------------------------------ PLOT RESULTS   ------------------------------
 
-solver.plotEOFs( 2, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
-solver.plotPCs(2)
+solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
+solver.plotPCs( 5 )
 
 
 

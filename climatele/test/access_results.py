@@ -1,22 +1,23 @@
-from climatele.plotter import ResultsPlotter
+from climatele.plotter import ResultsPlotter, MPL
 from climatele.project import *
 import numpy.ma as ma
 
 projectName = "MERRA2_EOFs"
+varName = "ts"
 outDir = "/tmp/"
 start_year = 1980
-end_year = 2000
-varName = "ts"
-experiment = projectName + '_'+str(start_year)+'-'+str(end_year) + '_' + varName
+end_year = 2015
+nModes = 32
+experiment = projectName + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
 
 if __name__ == "__main__":
     project = Project( outDir, projectName )
     plotter = ResultsPlotter( project.directory )
     plotResults = True
-    nPlotCols = 2
+    nPlotCols = 5
 
     if plotResults:
-        plotter.plotEOFs( project, experiment, nPlotCols )
+        plotter.plotEOFs( project, experiment, nPlotCols, MPL )
         plotter.plotPCs( project, experiment, nPlotCols )
 
     eofVarList = project.getVariableNames( experiment, EOF )
