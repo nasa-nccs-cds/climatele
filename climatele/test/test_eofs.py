@@ -2,17 +2,16 @@ import cdms2 as cdms
 import cdtime, math, cdutil, time
 from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
-import os
 
 #------------------------------ SET PARAMETERS   ------------------------------
 
 project = "MERRA2_EOFs"
-varName = "zg"
+varName = "ts"
 data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
-outDir = os.path.expanduser("~/results/")
+outDir = "/tmp/"
 start_year = 1980
 end_year = 2015
-nModes = 20
+nModes = 32
 
 experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
 start_time = cdtime.comptime(start_year)

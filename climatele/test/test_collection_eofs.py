@@ -9,7 +9,7 @@ from climatele.aggregation import Aggregation, Collection
 #------------------------------ SET PARAMETERS   ------------------------------
 
 project = "MERRA2_EOFs"
-varName = "ts"
+varName = "tas"
 collectionName = 'giss_r1i1p1'
 outDir = "/tmp/"
 start_year = 1800
