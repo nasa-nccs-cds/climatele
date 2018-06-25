@@ -1,5 +1,5 @@
 import cdms2 as cdms
-import cdtime, math, cdutil, time
+import cdtime, math, cdutil, time, os
 from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
 
@@ -8,10 +8,11 @@ from climatele.plotter import MPL, VCS
 project = "MERRA2_EOFs"
 varName = "ts"
 data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
-outDir = "/tmp/"
+outDir = os.path.expanduser("~/results/")
 start_year = 1980
 end_year = 2015
 nModes = 32
+plotResults = False
 
 experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
 start_time = cdtime.comptime(start_year)
@@ -32,8 +33,9 @@ print "Completed computing Eofs"
 
 #------------------------------ PLOT RESULTS   ------------------------------
 
-solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
-solver.plotPCs( 5 )
+if plotResults:
+    solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
+    solver.plotPCs( 5 )
 
 
 
