@@ -12,7 +12,7 @@ data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Rea
 outDir = os.path.expanduser("~/results/")
 start_year = 1980
 end_year = 2015
-nModes = 2
+nModes = 20
 
 experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
 start_time = cdtime.comptime(start_year)
