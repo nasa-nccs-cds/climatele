@@ -12,7 +12,7 @@ start_year = 1980
 end_year = 2015
 nModes = 32
 plotResults = True
-level = 100000
+level = 50000
 
 data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
 start_time = cdtime.comptime(start_year)
