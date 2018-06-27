@@ -6,23 +6,32 @@ from climatele.plotter import MPL, VCS
 #------------------------------ SET PARAMETERS   ------------------------------
 
 project = "MERRA2_EOFs"
-varName = "ts"
-data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
+varName = "zg"
 outDir = os.path.expanduser("~/results/")
 start_year = 1980
 end_year = 2015
 nModes = 32
-plotResults = False
+plotResults = True
+level = 100000
 
-experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
+data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
 start_time = cdtime.comptime(start_year)
 end_time = cdtime.comptime(end_year)
 
 #------------------------------ READ DATA ------------------------------
 
 read_start = time.time()
-f = cdms.open(data_path)
-variable = f( varName, latitude=(-80,80), level=(500,500), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
+
+if level:
+    experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName + "-" + str(level)
+    f = cdms.open(data_path)
+    variable = f( varName, latitude=(-80,80), level=(level,level), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
+else:
+    experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
+    f = cdms.open(data_path)
+    variable = f( varName, latitude=(-80,80), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
+
+
 print "Completed data read in " + str(time.time()-read_start) + " sec "
 
 #------------------------------ COMPUTE EOFS  ------------------------------

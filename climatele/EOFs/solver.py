@@ -72,7 +72,8 @@ class EOFSolver:
         for iPlot in range(self.nModes):
             eof = self.eofs[iPlot]  # type: cdms.tvariable.TransientVariable
             plot_title_str = 'EOF-' + str(iPlot) + ',' + self.experiment + ', ' + self.pves[iPlot]
-            v = cdms.createVariable( eof.squeeze().data, None, 0, 0, None, float('nan'), None, axes,  { "pve": self.pves[iPlot], "long_name": plot_title_str }, "EOF-" + str(iPlot) )
+            eof_data = eof.data.squeeze()
+            v = cdms.createVariable( eof_data, None, 0, 0, None, float('nan'), None, axes,  { "pve": self.pves[iPlot], "long_name": plot_title_str }, "EOF-" + str(iPlot) )
             outfile.write(v)
         outfile.close()
         print "Saved EOFs to file " + outfilePath
