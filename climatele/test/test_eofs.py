@@ -4,17 +4,18 @@ from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
 
 #------------------------------ SET PARAMETERS   ------------------------------
-
-project = "MERRA2_EOFs"
-varName = "zg"
+pname = "20CRv2c"
+project = pname + "_EOFs"
+varName = "ts"
 outDir = os.path.expanduser("~/results/")
-start_year = 1980
-end_year = 2015
-nModes = 32
-plotResults = True
-level = 50000
+start_year = 1851
+end_year = 2012
+nModes = 64
+plotResults = False
+level = None
 
-data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
+if pname == "MERRA2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
+elif pname == "20CRv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + varName + '.ncml'
 start_time = cdtime.comptime(start_year)
 end_time = cdtime.comptime(end_year)
 
