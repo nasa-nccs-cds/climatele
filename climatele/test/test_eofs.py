@@ -2,50 +2,55 @@ import cdms2 as cdms
 import cdtime, math, cdutil, time, os
 from climatele.EOFs.solver import EOFSolver
 from climatele.plotter import MPL, VCS
+from climatele.project import InputVarRec
 
 #------------------------------ SET PARAMETERS   ------------------------------
 pname = "20CRv2c"
 project = pname + "_EOFs"
-varName = "ts"
+variables = [ InputVarRec("ts"), InputVarRec("zg",80000), InputVarRec("zg",50000), InputVarRec("zg",25000) ]
 outDir = os.path.expanduser("~/results/")
 start_year = 1851
 end_year = 2012
 nModes = 64
 plotResults = False
-level = None
 
-if pname == "MERRA2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
-elif pname == "20CRv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + varName + '.ncml'
-start_time = cdtime.comptime(start_year)
-end_time = cdtime.comptime(end_year)
+for var in variables:
+    if pname == "MERRA2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + var.varName + '.ncml'
+    elif pname == "20CRv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + var.varName + '.ncml'
+    else: raise Exception( "Unknown project name: " + pname )
+    start_time = cdtime.comptime(start_year)
+    end_time = cdtime.comptime(end_year)
 
-#------------------------------ READ DATA ------------------------------
+    #------------------------------ READ DATA ------------------------------
 
-read_start = time.time()
+    read_start = time.time()
+    print "Computing Eofs for variable " + var.varName + ", level = " + str(var.level)
 
-if level:
-    experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName + "-" + str(level)
-    f = cdms.open(data_path)
-    variable = f( varName, latitude=(-80,80), level=(level,level), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
-else:
-    experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + varName
-    f = cdms.open(data_path)
-    variable = f( varName, latitude=(-80,80), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
+    if var.level:
+        experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + var.varName + "-" + str(var.level)
+        f = cdms.open(data_path)
+        variable = f( var.varName, latitude=(-80,80), level=(var.level,var.level), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
+    else:
+        experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + var.varName
+        f = cdms.open(data_path)
+        variable = f( var.varName, latitude=(-80,80), time=(start_time,end_time) )  # type: cdms.tvariable.TransientVariable
 
 
-print "Completed data read in " + str(time.time()-read_start) + " sec "
+    print "Completed data read in " + str(time.time()-read_start) + " sec "
 
-#------------------------------ COMPUTE EOFS  ------------------------------
+    #------------------------------ COMPUTE EOFS  ------------------------------
 
-solver = EOFSolver( project, experiment, outDir )
-solver.compute( variable, nModes, detrend=True, scale=True )
-print "Completed computing Eofs"
+    solver = EOFSolver( project, experiment, outDir )
+    solver.compute( variable, nModes, detrend=True, scale=True )
+    print "Completed computing Eofs for variable " + var.varName + ", level = " + str( var.level )
 
-#------------------------------ PLOT RESULTS   ------------------------------
+    #------------------------------ PLOT RESULTS   ------------------------------
 
-if plotResults:
-    solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
-    solver.plotPCs( 5 )
+    if plotResults:
+        solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
+        solver.plotPCs( 5 )
+
+    f.close()
 
 
 
