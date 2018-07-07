@@ -5,18 +5,24 @@ from climatele.plotter import MPL, VCS
 from climatele.project import InputVarRec
 
 #------------------------------ SET PARAMETERS   ------------------------------
-pname = "20CRv2c"
+#pname = "20CRv2c"
+pname = "MERRA2"
 project = pname + "_EOFs"
 variables = [ InputVarRec("ts"), InputVarRec("zg",80000), InputVarRec("zg",50000), InputVarRec("zg",25000) ]
 outDir = os.path.expanduser("~/results/")
-start_year = 1851
-end_year = 2012
 nModes = 64
 plotResults = False
 
+if pname.lower() == "merra2":
+    start_year = 1980
+    end_year = 2015
+elif pname.lower() == "20crv2c":
+    start_year = 1851
+    end_year = 2012
+
 for var in variables:
-    if pname == "MERRA2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + var.varName + '.ncml'
-    elif pname == "20CRv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + var.varName + '.ncml'
+    if pname.lower() == "merra2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + var.varName + '.ncml'
+    elif pname.lower() == "20crv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + var.varName + '.ncml'
     else: raise Exception( "Unknown project name: " + pname )
     start_time = cdtime.comptime(start_year)
     end_time = cdtime.comptime(end_year)
@@ -51,6 +57,8 @@ for var in variables:
         solver.plotPCs( 5 )
 
     f.close()
+
+print "DONE"
 
 
 
