@@ -40,6 +40,13 @@ class Project:
         return [ dataset(varName) for varName in varnames ]
 
 
+class InputVarRec:
+    def __init__(self, _varname, _level = None ):
+        self.varName = _varname
+        self.level = _level
+        self.id = self.varName + "-" + str(self.level) if self.level else self.varName
+
+
 
 
 

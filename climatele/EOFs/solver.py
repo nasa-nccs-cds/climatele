@@ -31,7 +31,7 @@ class EOFSolver:
 
         self.save_results()
 
-    def remove_cycle(self, variable, detrend_window = 0 ):
+    def remove_cycle(self, variable ):
         start = time.time()
         decycle = ANNUALCYCLE.departures( variable )
         print "completed decycle in " + str(time.time()-start) + " sec "
