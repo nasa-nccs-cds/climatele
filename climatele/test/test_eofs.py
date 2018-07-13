@@ -6,13 +6,13 @@ from climatele.plotter import MPL, VCS
 #------------------------------ SET PARAMETERS   ------------------------------
 pname = "20CRv2c"
 project = pname + "_EOFs"
-varName = "ts"
+varName = "zg"
 outDir = os.path.expanduser("~/results/")
 start_year = 1851
 end_year = 2012
 nModes = 64
 plotResults = False
-level = None
+level = 50000
 
 if pname == "MERRA2": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/Reanalysis/NASA-GMAO/GEOS-5/MERRA2/mon/atmos/' + varName + '.ncml'
 elif pname == "20CRv2c": data_path = 'https://dataserver.nccs.nasa.gov/thredds/dodsC/bypass/CREATE-IP/reanalysis/20CRv2c/mon/atmos/' + varName + '.ncml'
