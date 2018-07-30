@@ -24,8 +24,9 @@ class EOFSolver:
         eof_start = time.time()
         self.solver = Eof( detrended_data, **kwargs )
         self.eofs = self.solver.eofs( neofs=nModes )
-        self.pcs = self.solver.pcs().transpose()
-        self.fracs = self.solver.varianceFraction()
+        self.pcs = self.solver.pcs( npcs=nModes ).transpose()
+        self.projected_pcs = self.solver.projectField(detrended_data,neofs=32).transpose()
+        self.fracs = self.solver.varianceFraction( neigs=nModes )
         self.pves = [ str(round(float(frac*100.),1)) + '%' for frac in self.fracs ]
         print "Computed EOFs in " + str(time.time()-eof_start) + " sec "
 
@@ -83,3 +84,7 @@ class EOFSolver:
 
     def plotPCs( self, nCols ):
         self.plotter.plotPCs ( self.project, self.experiment, nCols  )
+
+    def plotPCComparison(self, nModes ):
+        vars = [ self.projected_pcs, self.pcs ]
+        self.plotter.plotter.mpl_comparison_timeplot_variables( self.variable, vars, nModes)

@@ -42,6 +42,7 @@ class PlotMgr:
         plt.show()
 
     def mpl_timeplot( self, project, experiment, numCols = 4 ):
+        # type: (Project, Experiment, int) -> object
         dataPath = project.outfilePath( experiment, PC )
         if dataPath:
             for k in range(0,30):
@@ -74,6 +75,36 @@ class PlotMgr:
         fig.autofmt_xdate()
         plt.show()
         return ax
+
+    def mpl_comparison_timeplot_variables(self, ref_var, variables, nModes):
+        # type: (cdms2.tvariable.TransientVariable, list[cdms2.tvariable.TransientVariable], int) -> Figure
+        fig = plt.figure()    # type: Figure
+        varNames = "-".join( [ timeSeries.id for timeSeries in variables ] )
+        self.logger.info("  ->  Plotting variable: " + varNames )
+        long_names = "-".join( [ timeSeries.attributes.get('long_name')for timeSeries in variables ] )
+        datetimes = [datetime.datetime(x.year, x.month, x.day, x.hour, x.minute, int(x.second)) for x in ref_var.getTime().asComponentTime()]
+        dates =  matplotlib.dates.date2num(datetimes)
+        for iMode in range(nModes):
+            ax = fig.add_subplot(2, int( math.ceil( nModes/2.0 ) ), iMode+1 )
+            title = "Mode " + str(iMode) + ": " + ( varNames if not long_names else long_names )
+            ax.set_title(title)
+            modeVars = [ var[iMode] for var in variables ]
+            fmts = [ "b-", "r--", "g-.", "y:",]
+            for iM in range(len(modeVars)):
+                timeSeries = modeVars[iM]
+                ax.plot( dates, self.norm( timeSeries.data.squeeze() ), fmts[iM] )
+                ax.xaxis.set_major_formatter( mdates.DateFormatter('%b %Y') )
+                ax.grid(True)
+        fig.autofmt_xdate()
+        plt.show()
+        return fig
+
+    def norm(self,data,axis=0):
+        # type: (np.ndarray) -> np.ndarray
+        mean = data.mean(axis)
+        centered = (data - mean)
+        std = centered.std(axis)
+        return centered / std
 
     def getAxis(self, axes, atype ):
         for axis in axes:

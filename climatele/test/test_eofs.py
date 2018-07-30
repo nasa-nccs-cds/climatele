@@ -8,10 +8,11 @@ from climatele.project import InputVarRec
 #pname = "20CRv2c"
 pname = "MERRA2"
 project = pname + "_EOFs"
-variables = [ InputVarRec("ts"), InputVarRec("zg",80000), InputVarRec("zg",50000), InputVarRec("zg",25000) ]
+variables = [ InputVarRec("ts")] # , InputVarRec("zg",80000) , InputVarRec("zg",50000), InputVarRec("zg",25000)
 outDir = os.path.expanduser("~/results/")
-nModes = 64
+nModes = 8
 plotResults = False
+plotComparison = True
 
 if pname.lower() == "merra2":
     start_year = 1980
@@ -55,6 +56,10 @@ for var in variables:
     if plotResults:
         solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
         solver.plotPCs( 5 )
+
+    if plotComparison:
+        solver.plotPCComparison(4)
+
 
     f.close()
 
