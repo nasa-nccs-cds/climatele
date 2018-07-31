@@ -5,14 +5,13 @@ from climatele.plotter import MPL, VCS
 from climatele.project import InputVarRec
 
 #------------------------------ SET PARAMETERS   ------------------------------
-pname = "20CRv2c"
-#pname = "MERRA2"
+#pname = "20CRv2c"
+pname = "MERRA2"
 project = pname + "_EOFs"
-variables = [ InputVarRec("ts")] # , InputVarRec("zg",80000) , InputVarRec("zg",50000), InputVarRec("zg",25000)
+variables = [ InputVarRec("ts") ]
 outDir = os.path.expanduser("~/results/")
-nModes = 64
+nModes = 8
 plotResults = True
-plotComparison = False
 
 if pname.lower() == "merra2":
     start_year = 1980
@@ -31,7 +30,7 @@ for var in variables:
     #------------------------------ READ DATA ------------------------------
 
     read_start = time.time()
-    print "Computing Eofs for variable " + var.varName + ", level = " + str(var.level)
+    print "Computing Eofs for variable " + var.varName + ", level = " + str(var.level) + ", nModes = " + str(nModes)
 
     if var.level:
         experiment = project + '_'+str(start_year)+'-'+str(end_year) + '_M' + str(nModes) + "_" + var.varName + "-" + str(var.level)
@@ -54,12 +53,8 @@ for var in variables:
     #------------------------------ PLOT RESULTS   ------------------------------
 
     if plotResults:
-        solver.plotEOFs( 5, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
-        solver.plotPCs( 5 )
-
-    if plotComparison:
-        solver.plotPCComparison(4)
-
+        solver.plotEOFs( 4, MPL )    # Change MPL to VCS for vcs plots (thomas projection)
+        solver.plotPCs( 4 )
 
     f.close()
 
